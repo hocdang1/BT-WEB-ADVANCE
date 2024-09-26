@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Product</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+   <h1>New Product</h1>
+   <hr>
+   <div class="section">
+    <form id="frm">
+       <p>
+         <label>
+            Fullname_Customer:
+            <input type="text" name="cname" id="cname">
+        </label>
+       </p>
+       <p>
+        <label>
+            Id_Pro:
+            <input type="text" name="pid" id="pid">
+        </label>
+       </p>
+       <p>
+        <label>
+            Name_Pro:
+            <input type="text" name="pname" id="pname">
+        </label>
+        </p>
+        <p>
+        <label>
+            Quantity_Pro:
+            <input type="text" name="qty" id="qty">
+        </label>
+    </p>
+    <p>
+        <label>
+            Price_Pro:
+            <input type="text" name="pri" id="pri">
+        </label>
+       </p>
+       <p> 
+        <button type="button" onclick="save()">Save</button>
+        <button type="button" onclick="show()">Show</button>
+        <button type="button" onclick="resetAll()">Reset</button>
+       </p>
+    </form>
+    
+    <table id="tb" border="1">
+        <thead id="thead">
+        <tr>
+            <th>Auto_Increment</th>
+            <th>Fullname_Customer</th>
+            <th>Id_Pro</th>
+            <th>Name_Pro</th>
+            <th>Quantity_Pro</th>
+            <th>Price_Pro</th>
+            <th>Discount</th>
+            <th>Amount</th>
+            <th>Total</th>
+        </tr>
+        </thead>
+        <tbody id="tbody">
+            <tr> 
+                <td colspan="8" style="text-align:right;">Total</td>
+                <td id="total">0</td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+
+    <script>
+        var id = 0;
+        var totalPrice = 0;
+        var savedData = []; // Array to hold the saved data
+
+        // Function to calculate discount
+        function calculateDiscount(qty, price) {
+            let discountRate = 0;
+            if (qty >= 10) {
+                discountRate = 0.1; // 10% discount for 10 or more products
+            }
+            return qty * price * discountRate;
+        }
+
+        // Save function (stores the data in memory)
+        function save() {
+            id++;
+            var cname = document.getElementById('cname').value;
+            var pid = document.getElementById('pid').value;
+            var pname = document.getElementById('pname').value;
+            var qty = parseFloat(document.getElementById('qty').value);
+            var price = parseFloat(document.getElementById('pri').value);
+
+            if (!cname || !pid || !pname || isNaN(qty) || isNaN(price)) {
+                alert('Please fill in all fields correctly!');
+                return;
+            }
+
+            var discount = calculateDiscount(qty, price);
+            var amount = qty * price;
+            var total = amount - discount;
+
+            // Store the data in the savedData array
+            savedData.push({
+                id: id,
+                cname: cname,
+                pid: pid,
+                pname: pname,
+                qty: qty,
+                price: price,
+                discount: discount,
+                amount: amount,
+                total: total
+            });
+           
+           
+        }
+
+        // Function to display the saved data in the table
+        function show() {
+            var tbody = document.getElementById('tbody');
+            tbody.innerHTML = `
+                <tr> 
+                    <td colspan="8" style="text-align:right;">Total</td>
+                    <td id="total">0</td>
+                </tr>
+            `; // Clear table except for the total row
+
+            totalPrice = 0;
+
+            // Loop through savedData and add rows
+            savedData.forEach(item => {
+                var newRow = tbody.insertRow(tbody.rows.length - 1); // Insert before the total row
+
+                newRow.insertCell(0).innerHTML = item.id;
+                newRow.insertCell(1).innerHTML = item.cname;
+                newRow.insertCell(2).innerHTML = item.pid;
+                newRow.insertCell(3).innerHTML = item.pname;
+                newRow.insertCell(4).innerHTML = item.qty;
+                newRow.insertCell(5).innerHTML = item.price;
+                newRow.insertCell(6).innerHTML = item.discount.toFixed(2); 
+                newRow.insertCell(7).innerHTML = item.amount.toFixed(2);  
+                newRow.insertCell(8).innerHTML = item.total.toFixed(2);    
+
+                totalPrice += item.total;
+            });
+
+            document.getElementById('total').innerHTML = totalPrice.toFixed(2);
+        }
+
+        // Reset only the form fields
+        function resetAll() {
+            document.getElementById('frm').reset();
+        }
+
+        
+    </script>
+</body>
+
+</html>
